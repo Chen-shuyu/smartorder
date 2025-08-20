@@ -1,8 +1,8 @@
 package com.taifex.smartorder.service;
 
+import com.taifex.smartorder.dto.UserDTO;
 import com.taifex.smartorder.entity.User;
 import com.taifex.smartorder.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,11 +11,19 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     // 儲存使用者
-    public User saveUser(User user) {
+    public User saveUser(UserDTO userDTO) {
+        User user = User.builder()
+                .name(userDTO.getName())
+                .email(userDTO.getEmail())
+                .age(userDTO.getAge())
+                .build();
         return userRepository.save(user);
     }
 
@@ -40,8 +48,13 @@ public class UserService {
     }
 
     // 更新使用者
-    public User updateUser(User user) {
-        return userRepository.save(user);
+    public User updateUser(Long id, UserDTO userDTO) {
+
+        User updateUser = userRepository.findById(id).get();
+        updateUser.setName(userDTO.getName());
+        updateUser.setEmail(userDTO.getEmail());
+        updateUser.setAge(userDTO.getAge());
+        return userRepository.save(updateUser);
     }
 
     // 刪除使用者

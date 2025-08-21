@@ -9,7 +9,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,6 +23,9 @@ public class UserServiceTest {
     @InjectMocks
     private UserService userService; // 測試的目標
 
+    /*
+     * POST /api/users → 新增使用者成功
+     * */
     @Test
     void saveUser_shouldReturnSavedUser(){
         UserDTO dto = new UserDTO();
@@ -46,6 +48,9 @@ public class UserServiceTest {
         assertThat(result.getName()).isEqualTo("Alice");
     }
 
+    /*
+     * GET /api/users/{id} → 查詢使用者成功
+     * */
     @Test
     void getUserById_shouldReturnUserIfExists() {
         User fakeUser = User.builder()
@@ -63,6 +68,9 @@ public class UserServiceTest {
         assertThat(result.get().getName()).isEqualTo("Bob");
     }
 
+    /*
+     * GET /api/users/{id}  如果資料庫裡 沒有這個 id，我們希望 API 回傳 404 Not Found
+     * */
     @Test
     void getUserById_shouldReturnEmptyIfNotExists() {
         when(userRepository.findById(99L)).thenReturn(Optional.empty());

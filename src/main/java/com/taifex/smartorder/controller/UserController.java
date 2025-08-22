@@ -1,6 +1,8 @@
 package com.taifex.smartorder.controller;
 
+import com.taifex.smartorder.dto.OrderDTO;
 import com.taifex.smartorder.dto.UserDTO;
+import com.taifex.smartorder.service.OrderService;
 import com.taifex.smartorder.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +15,11 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
+    private final OrderService orderService;
 
-    public UserController(UserService userService){
+    public UserController(UserService userService, OrderService orderService){
         this.userService = userService;
+        this.orderService = orderService;
     }
 
     // GET /api/users - 取得所有使用者
@@ -63,5 +67,12 @@ public class UserController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    // GET  /api/users/{userId}/orders - 查詢使用者所有訂單
+    @GetMapping("/{userId}/orders")
+    public ResponseEntity<List<OrderDTO>> getUserOrders(@PathVariable Long userId){
+        List<OrderDTO> orders = orderService.getOrdersByUserId(userId);
+        return ResponseEntity.ok(orders);
     }
 }

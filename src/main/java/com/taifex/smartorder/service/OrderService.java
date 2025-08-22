@@ -84,4 +84,10 @@ public class OrderService {
         }
         return false;
     }
+
+    // 查詢使用者的所有訂單
+    public List<OrderDTO> getOrdersByUserId(Long id){
+        List<Order> orders = orderRepository.findByUserId(id);
+        return orders.stream().map(this::mapToDTO).toList();
+    }
 }

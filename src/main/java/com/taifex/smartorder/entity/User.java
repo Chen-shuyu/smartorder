@@ -3,6 +3,8 @@ package com.taifex.smartorder.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "users")
 @Getter
@@ -24,5 +26,7 @@ public class User {
 
     private Integer age;
 
-
+    // 關聯：一個 User 可以有多個 Order
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Order> orders;
 }

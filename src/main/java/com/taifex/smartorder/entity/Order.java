@@ -31,9 +31,13 @@ public class Order {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
+
+    // 關聯：多個訂單對應一個使用者
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }

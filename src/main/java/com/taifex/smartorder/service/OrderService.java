@@ -2,7 +2,10 @@ package com.taifex.smartorder.service;
 
 import com.taifex.smartorder.dto.OrderDTO;
 import com.taifex.smartorder.entity.Order;
+import com.taifex.smartorder.entity.User;
+import com.taifex.smartorder.exception.ResourceNotFoundException;
 import com.taifex.smartorder.repository.OrderRepository;
+import com.taifex.smartorder.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,9 +16,11 @@ import java.util.stream.Collectors;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
 
-    public OrderService(OrderRepository orderRepository){
+    public OrderService(OrderRepository orderRepository, UserRepository userRepository){
         this.orderRepository = orderRepository;
+        this.userRepository = userRepository;
     }
 
     private OrderDTO mapToDTO(Order order){
@@ -25,21 +30,25 @@ public class OrderService {
         dto.setAmount(order.getAmount());
         dto.setPrice(order.getPrice());
         dto.setTotal(order.getPrice()*order.getAmount());
+        dto.setUserId(order.getUser().getId());
         return dto;
     }
 
-    private Order mapTOEntity(OrderDTO orderDTO){
+    private Order mapTOEntity(OrderDTO orderDTO, User user){
         return Order.builder()
                 .id(orderDTO.getId())
                 .productName(orderDTO.getProductName())
                 .amount(orderDTO.getAmount())
                 .price(orderDTO.getPrice())
+                .user(user)
                 .build();
     }
 
     // 新增訂單
     public OrderDTO saveOrder(OrderDTO orderDTO){
-        Order order = mapTOEntity(orderDTO);
+        User user = userRepository.findById(orderDTO.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + orderDTO.getUserId()));
+        Order order = mapTOEntity(orderDTO, user);
         Order saved = orderRepository.save(order);
         return mapToDTO(saved);
     }

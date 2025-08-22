@@ -9,4 +9,5 @@ public class OrderDTO {
     private Integer amount;
     private Double price;
     private Double total; //額外計算欄位
+    private Long userId; // 新增：對應到使用者
 }

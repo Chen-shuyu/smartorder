@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -17,29 +18,44 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    // 儲存使用者
-    public User saveUser(UserDTO userDTO) {
-        User user = User.builder()
+    private UserDTO mapToDTO(User user){
+        UserDTO userDTO = new UserDTO();
+        userDTO.setName(user.getName());
+        userDTO.setEmail(user.getEmail());
+        userDTO.setAge(user.getAge());
+        return userDTO;
+    }
+
+    private User mapToEntity(UserDTO userDTO){
+        return User.builder()
+                .id(userDTO.getId())
                 .name(userDTO.getName())
                 .email(userDTO.getEmail())
                 .age(userDTO.getAge())
                 .build();
-        return userRepository.save(user);
+    }
+
+    // 儲存使用者
+    public UserDTO saveUser(UserDTO userDTO) {
+        User user = mapToEntity(userDTO);
+        User saved = userRepository.save(user);
+        return mapToDTO(saved);
     }
 
     // 查找所有使用者
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserDTO> getAllUsers() {
+        return userRepository.findAll()
+                .stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
     // 根據 ID 查找使用者
-    public Optional<User> getUserById(Long id) {
-        return userRepository.findById(id);
+    public Optional<UserDTO> getUserById(Long id) {
+        return userRepository.findById(id).map(this::mapToDTO);
     }
 
     // 根據 email 查找使用者
-    public Optional<User> getUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public Optional<UserDTO> getUserByEmail(String email) {
+        return userRepository.findByEmail(email).map(this::mapToDTO);
     }
 
     // 根據名字查找使用者
@@ -48,13 +64,13 @@ public class UserService {
     }
 
     // 更新使用者
-    public User updateUser(Long id, UserDTO userDTO) {
-
-        User updateUser = userRepository.findById(id).get();
-        updateUser.setName(userDTO.getName());
-        updateUser.setEmail(userDTO.getEmail());
-        updateUser.setAge(userDTO.getAge());
-        return userRepository.save(updateUser);
+    public Optional<UserDTO> updateUser(Long id, UserDTO userDTO) {
+        return userRepository.findById(id).map(existing -> {
+            existing.setName(userDTO.getName());
+            existing.setAge(userDTO.getAge());
+            existing.setEmail(userDTO.getEmail());
+           return mapToDTO(userRepository.save(existing));
+        });
     }
 
     // 刪除使用者

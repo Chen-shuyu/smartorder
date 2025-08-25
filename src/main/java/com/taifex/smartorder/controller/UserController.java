@@ -75,4 +75,13 @@ public class UserController {
         List<OrderDTO> orders = orderService.getOrdersByUserId(userId);
         return ResponseEntity.ok(orders);
     }
+
+    /*
+    * Lazy vs Eager 的行為，幫助理解 N+1 問題
+    * */
+    @GetMapping("/demo-nplusone")
+    public ResponseEntity<String> demoNPlusOne() {
+        userService.demoNPlusOne();
+        return ResponseEntity.ok("Check console logs for N+1 queries!");
+    }
 }

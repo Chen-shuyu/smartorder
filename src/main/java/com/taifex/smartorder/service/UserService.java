@@ -82,4 +82,13 @@ public class UserService {
     public boolean isEmailExists(String email) {
         return userRepository.findByEmail(email).isPresent();
     }
+
+
+    public void demoNPlusOne() {
+        List<User> users = userRepository.findAll();
+        for (User u : users) {
+            // ⚠️ 這行會觸發 N+1 問題
+            System.out.println(u.getName() + " has " + u.getOrders().size() + " orders");
+        }
+    }
 }

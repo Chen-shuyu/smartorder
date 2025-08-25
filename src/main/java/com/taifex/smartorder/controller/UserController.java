@@ -84,4 +84,17 @@ public class UserController {
         userService.demoNPlusOne();
         return ResponseEntity.ok("Check console logs for N+1 queries!");
     }
+
+    @GetMapping("/demo-nplusone-solved")
+    public ResponseEntity<String> demoNPlusOneSolved() {
+        userService.demoNPlusOneSolved();
+        return ResponseEntity.ok("Check console logs for fetch join query!");
+    }
+
+    @GetMapping("/demo-entitygraph")
+    public ResponseEntity<String> demoEntityGraph() {
+        userService.demoEntityGraph();
+        return ResponseEntity.ok("Check console logs for EntityGraph query!");
+    }
+
 }

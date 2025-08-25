@@ -91,4 +91,19 @@ public class UserService {
             System.out.println(u.getName() + " has " + u.getOrders().size() + " orders");
         }
     }
+
+    public void demoNPlusOneSolved() {
+        List<User> users = userRepository.findAllWithOrders();
+        for (User u : users) {
+            System.out.println(u.getName() + " has " + u.getOrders().size() + " orders");
+        }
+    }
+
+    public void demoEntityGraph() {
+        List<User> users = userRepository.findAllBy();
+        for (User u : users) {
+            System.out.println(u.getName() + " has " + u.getOrders().size() + " orders");
+        }
+    }
+
 }

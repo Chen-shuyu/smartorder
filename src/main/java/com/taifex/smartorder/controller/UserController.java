@@ -2,6 +2,7 @@ package com.taifex.smartorder.controller;
 
 import com.taifex.smartorder.dto.OrderDTO;
 import com.taifex.smartorder.dto.UserDTO;
+import com.taifex.smartorder.exception.ResourceNotFoundException;
 import com.taifex.smartorder.service.OrderService;
 import com.taifex.smartorder.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -31,11 +32,8 @@ public class UserController {
     // GET /api/users/{id} - 根據 ID 取得使用者
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id){
-        Optional<UserDTO> user = userService.getUserById(id);
-        if(user.isPresent()){
-            return ResponseEntity.ok(user.get());
-        }
-        return ResponseEntity.notFound().build();
+        UserDTO user = userService.getUserById(id).orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+        return ResponseEntity.ok(user);
     }
 
     // POST /api/users - 建立新使用者
@@ -51,22 +49,18 @@ public class UserController {
     // PUT /api/users/{id} - 更新使用者
     @PutMapping
     public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody UserDTO userDTO){
-        Optional<UserDTO> user = userService.getUserById(id);
-        if(user.isPresent()){
-            Optional<UserDTO> updatesUser = userService.updateUser(id,userDTO);
-            return ResponseEntity.ok(updatesUser.get());
-        }
-        return ResponseEntity.notFound().build();
+        UserDTO updatesUser = userService.updateUser(id,userDTO).orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+        return ResponseEntity.ok(updatesUser);
     }
 
     // DELETE /api/users/{id} - 刪除使用者
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id){
-        if (userService.getUserById(id).isPresent()){
-            userService.deleteUser(id);
-            return ResponseEntity.noContent().build();
+        if (userService.getUserById(id).isEmpty()){
+            throw new ResourceNotFoundException("User not found with id: " + id);
         }
-        return ResponseEntity.notFound().build();
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 
     // GET  /api/users/{userId}/orders - 查詢使用者所有訂單

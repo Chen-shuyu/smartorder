@@ -1,6 +1,7 @@
 package com.taifex.smartorder.controller;
 
 import com.taifex.smartorder.dto.OrderDTO;
+import com.taifex.smartorder.exception.ResourceNotFoundException;
 import com.taifex.smartorder.service.OrderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,11 +30,8 @@ public class OrderController {
     // GET /api/orders/{id} - 根據 ID 取得訂單
     @GetMapping("/{id}")
     public ResponseEntity<OrderDTO> getOrderById(@PathVariable Long id){
-        Optional<OrderDTO> orderDTO = orderService.getOrderById(id);
-        if(orderDTO.isPresent()){
-            return ResponseEntity.ok(orderDTO.get());
-        }
-        return ResponseEntity.notFound().build();
+        OrderDTO orderDTO = orderService.getOrderById(id).orElseThrow(() -> new ResourceNotFoundException("Order not found with id: "+ id));
+        return ResponseEntity.ok(orderDTO);
     }
 
     // GET /api/orders - 取得所有訂單
@@ -45,20 +43,17 @@ public class OrderController {
     // PUT /api/orders/{id} - 更新訂單
     @PutMapping("/{id}")
     public ResponseEntity<OrderDTO> updateOrder(@PathVariable Long id, @RequestBody OrderDTO orderDTO){
-        if(orderService.getOrderById(id).isPresent()){
-            Optional<OrderDTO> updated = orderService.updateOrder(id, orderDTO);
-            return ResponseEntity.ok(updated.get());
-        }
-        return ResponseEntity.notFound().build();
+        OrderDTO updated = orderService.updateOrder(id, orderDTO).orElseThrow(() ->new ResourceNotFoundException("Order not found with id: "+ id));
+        return ResponseEntity.ok(updated);
     }
 
     // DELETE /api/orders/{id} - 刪除訂單
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrder(@PathVariable Long id){
-        if(orderService.getOrderById(id).isPresent()){
-            orderService.deleteOrder(id);
-            return ResponseEntity.noContent().build();
+        if(orderService.getOrderById(id).isEmpty()){
+            throw new ResourceNotFoundException("Order not found with id: "+ id);
         }
-        return ResponseEntity.notFound().build();
+        orderService.deleteOrder(id);
+        return ResponseEntity.noContent().build();
     }
 }

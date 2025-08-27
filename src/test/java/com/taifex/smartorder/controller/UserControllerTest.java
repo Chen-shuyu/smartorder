@@ -3,6 +3,7 @@ package com.taifex.smartorder.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taifex.smartorder.dto.UserDTO;
 import com.taifex.smartorder.entity.User;
+import com.taifex.smartorder.service.OrderService;
 import com.taifex.smartorder.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,9 @@ public class UserControllerTest {
     @MockitoBean
     private UserService userService;
 
+    @MockitoBean
+    private OrderService orderService;
+
     @Test
     void createUser_shouldReturnSavedUser() throws Exception{
         UserDTO dto = new UserDTO();
@@ -39,14 +43,14 @@ public class UserControllerTest {
         dto.setEmail("alice@example.com");
         dto.setAge(25);
 
-        User fakeUser = User.builder()
-                .id(1L)
-                .name("Alice")
-                .email("alice@example.com")
-                .age(25)
-                .build();
+        // 這裡用 DTO，不要用 Entity
+        UserDTO fakeUserDTO = new UserDTO();
+        fakeUserDTO.setId(1L);
+        fakeUserDTO.setName("Alice");
+        fakeUserDTO.setEmail("alice@example.com");
+        fakeUserDTO.setAge(25);
 
-        when(userService.saveUser(any(UserDTO.class))).thenReturn(fakeUser);
+        when(userService.saveUser(any(UserDTO.class))).thenReturn(fakeUserDTO);
 
         mockMvc.perform(post("/api/users")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -58,14 +62,14 @@ public class UserControllerTest {
 
     @Test
     void gerUserById_shouldReturnUserIfExists() throws Exception{
-        User fakeUser = User.builder()
-                .id(1L)
-                .name("Bob")
-                .email("bob@example.com")
-                .age(30)
-                .build();
 
-        when(userService.getUserById(1L)).thenReturn(Optional.of(fakeUser));
+        UserDTO fakeUserDTO = new UserDTO();
+        fakeUserDTO.setId(1L);
+        fakeUserDTO.setName("Bob");
+        fakeUserDTO.setEmail("bob@example.com");
+        fakeUserDTO.setAge(30);
+
+        when(userService.getUserById(1L)).thenReturn(Optional.of(fakeUserDTO));
 
         mockMvc.perform(get("/api/users/1"))
                 .andExpect(status().isOk())

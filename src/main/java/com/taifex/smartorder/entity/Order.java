@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class Order {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // DB 自動產生 id
     private Long id;
 
     @Column(nullable = false)

@@ -20,13 +20,11 @@ public class OrderController {
 
     // POST /api/orders - 建立新訂單
     @PostMapping
-    public ResponseEntity<OrderDTO> createOrder(@PathVariable Long id, @RequestBody OrderDTO orderDTO){
-        if(orderService.getOrderById(id).isPresent()){
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<OrderDTO> createOrder(@RequestBody OrderDTO orderDTO) {
         OrderDTO createdDTO = orderService.saveOrder(orderDTO);
         return ResponseEntity.ok(createdDTO);
     }
+
 
     // GET /api/orders/{id} - 根據 ID 取得訂單
     @GetMapping("/{id}")

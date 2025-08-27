@@ -32,6 +32,7 @@ public class UserServiceTest {
         dto.setName("Alice");
         dto.setEmail("alice@gmail.com");
         dto.setAge(25);
+        dto.setId(1L);
 
         User fakeUser = User.builder()
                 .id(1L)
@@ -42,7 +43,7 @@ public class UserServiceTest {
 
         when(userRepository.save(any(User.class))).thenReturn(fakeUser);
 
-        User result = userService.saveUser(dto);
+        UserDTO result = userService.saveUser(dto);
 
         assertThat(result.getId()).isEqualTo(1L);
         assertThat(result.getName()).isEqualTo("Alice");
@@ -62,7 +63,7 @@ public class UserServiceTest {
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(fakeUser));
 
-        Optional<User> result = userService.getUserById(1L);
+        Optional<UserDTO> result = userService.getUserById(1L);
 
         assertThat(result).isPresent();
         assertThat(result.get().getName()).isEqualTo("Bob");
@@ -75,7 +76,7 @@ public class UserServiceTest {
     void getUserById_shouldReturnEmptyIfNotExists() {
         when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
-        Optional<User> result = userService.getUserById(99L);
+        Optional<UserDTO> result = userService.getUserById(99L);
 
         assertThat(result).isEmpty();
     }

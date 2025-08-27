@@ -8,6 +8,7 @@ import com.taifex.smartorder.repository.OrderRepository;
 import com.taifex.smartorder.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,14 +35,14 @@ public class OrderService {
         return dto;
     }
 
-    private Order mapTOEntity(OrderDTO orderDTO, User user){
-        return Order.builder()
-                .id(orderDTO.getId())
-                .productName(orderDTO.getProductName())
-                .amount(orderDTO.getAmount())
-                .price(orderDTO.getPrice())
-                .user(user)
-                .build();
+    private Order mapTOEntity(OrderDTO dto, User user) {
+        Order order = new Order();
+        order.setProductName(dto.getProductName());
+        order.setAmount(dto.getAmount());
+        order.setPrice(dto.getPrice());
+        order.setUser(user);
+        order.setCreatedAt(LocalDateTime.now());
+        return order;
     }
 
     // 新增訂單

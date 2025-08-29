@@ -8,6 +8,7 @@ import com.taifex.smartorder.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -67,6 +68,15 @@ public class UserController {
     @GetMapping("/{userId}/orders")
     public ResponseEntity<List<OrderDTO>> getUserOrders(@PathVariable Long userId){
         List<OrderDTO> orders = orderService.getOrdersByUserId(userId);
+        return ResponseEntity.ok(orders);
+    }
+
+    //  GET /api/users/{id}/orders?start=2025-08-01&end=2025-08-31  --查詢「某用戶在某個日期區間內的所有訂單」
+    // /api/users/1/orders/range?start=2025-08-01T00:00:00&end=2025-08-31T23:59:59
+    @GetMapping("/{userId}/orders/range")
+    public ResponseEntity<List<OrderDTO>> getOrdersByUserIdAndCreatedAtBetween(@PathVariable Long userId
+            , @RequestParam LocalDateTime start, @RequestParam LocalDateTime end){
+        List<OrderDTO> orders = orderService.getOrderByIdAndCreatedAtBetween(userId, start, end);
         return ResponseEntity.ok(orders);
     }
 

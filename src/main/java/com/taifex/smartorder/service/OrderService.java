@@ -91,4 +91,10 @@ public class OrderService {
         List<Order> orders = orderRepository.findByUserId(id);
         return orders.stream().map(this::mapToDTO).toList();
     }
+
+    // 查詢 「某用戶在某個日期區間內的所有訂單」
+    public List<OrderDTO> getOrderByIdAndCreatedAtBetween(Long id, LocalDateTime start, LocalDateTime end){
+        List<Order> orders = orderRepository.findByUserIdAndCreatedAtBetween(id, start, end);
+        return orders.stream().map(this::mapToDTO).toList();
+    }
 }
